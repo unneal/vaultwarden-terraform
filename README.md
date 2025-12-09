@@ -278,19 +278,47 @@ Vaultwarden Page Loads Indefinitely
 
 Wait 2–3 minutes after deployment for Docker services to complete first-time setup.
 
-Intended Users
+# Deleting everything on AWS
+
+Follow the steps below to delete everything on AWS for:
+
+- Changing AWS accounts
+- Any maintenance work
+- No longer using Vaultwarden
+- No longer using this solution 
+
+---------------------------
+terraform destroy
+
+yes
+---------------------------
+
+# Intended Users
 
 This repository is designed for:
 
-CDF internal security team
+- CDF internal security team
 
-Users with no Terraform or AWS background
+- Users with no Terraform or AWS background
 
-Secure organizational credential storage
+- Secure organizational credential storage
 
-Cloud-hosted password management
+- Cloud-hosted password management
 
-Compliance-aligned infrastructure deployment
+- Compliance-aligned infrastructure deployment
+
+
+# Checklist
+
+- Installing brew
+- Creating an IAM user on AWS > Security Credentials > Copy Access Key & Secret Access Key 
+- Installing and configuring AWS CLI
+- Installing terraform
+- Cloning this repo to a directory of your choice on your local machine
+- Running the command "terraform init" in the same (terraform) directory
+- terraform plan
+- terraform apply
+
 
 
 Author:
