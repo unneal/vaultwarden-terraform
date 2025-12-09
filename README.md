@@ -63,6 +63,7 @@ aws --version
 
 Each command must return a valid version number.
 
+
 ## Part 2 — AWS Account Setup (One-Time)
 ### 3. Create an IAM User for Terraform
 
@@ -119,10 +120,12 @@ aws sts get-caller-identity
 
 This must return your AWS account ID and IAM username.
 
+
 ## Part 3 — Obtain the Source Code
 ### 5. Clone the Repository
 git clone https://github.com/unneal/vaultwarden-terraform.git
 cd vaultwarden-terraform
+
 
 ## Part 4 — Secure Deployment Configuration
 ### 6. Create Terraform Variables File
@@ -163,6 +166,7 @@ Secure the key file:
 
 chmod 400 vaultwarden-key.pem
 
+
 ## Part 5 — Deploy Vaultwarden
 ### 8. Initialize Terraform
 terraform init
@@ -188,6 +192,7 @@ Example:
 
 vaultwarden_url = "https://18.xxx.xxx.xxx.sslip.io"
 
+
 ## Part 6 — Initial Vaultwarden Setup
 ### 11. Open Vaultwarden
 
@@ -212,8 +217,8 @@ Disable public signups
 
 Configure organizational policies if required
 
-## Part 7 — Health Verification
 
+## Part 7 — Health Verification
 Confirm all of the following:
 
 Login works
@@ -224,8 +229,8 @@ HTTPS encryption is active
 
 Application remains stable across refreshes
 
-## Part 8 — Cost Awareness
 
+## Part 8 — Cost Awareness
 This deployment includes:
 
 One t3.micro EC2 instance
@@ -238,8 +243,8 @@ Minimal attached storage
 
 Estimated monthly cost is approximately USD 6–9.
 
-## Part 9 — Destroying Infrastructure
 
+## Part 9 — Destroying Infrastructure
 To permanently delete all deployed resources:
 
 terraform destroy
@@ -251,6 +256,7 @@ yes
 
 
 This permanently deletes the server and all stored data.
+
 
 ## Part 10 — Common Issues
 Instance Type Not Allowed
@@ -286,8 +292,8 @@ Cloud-hosted password management
 
 Compliance-aligned infrastructure deployment
 
-Maintainer
 
+Author:
 Anil Kumar Gorthi
 Cybersecurity Analyst — Internal Security Team
 Community Dreams Foundation (CDF)
