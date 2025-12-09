@@ -1,0 +1,4 @@
+aws_region   = "us-east-1" #set your desired default region
+instance_type = "t3.micro" #set your desired free-tier instance_type
+key_name     = "your-key-name" #update this to a key pair created in your region on EC2
+admin_token  = "your-admin-token" #token for /admin page, include something nice and definitely not to be shared
