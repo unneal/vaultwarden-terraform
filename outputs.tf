@@ -1,0 +1,7 @@
+output "vaultwarden_url" {
+  value = "https://${aws_instance.vaultwarden.public_ip}.sslip.io"
+}
+
+output "public_ip" {
+  value = aws_instance.vaultwarden.public_ip
+}

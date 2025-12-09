@@ -1,0 +1,44 @@
+#!/bin/bash
+set -e
+
+# Update system
+apt update -y && apt upgrade -y
+
+# Install Docker
+apt install -y docker.io
+systemctl enable docker
+systemctl start docker
+
+# Create persistent data directory
+mkdir -p /vw-data
+chmod 755 /vw-data
+
+# Run Vaultwarden
+docker run -d \
+  --name vaultwarden \
+  -e ADMIN_TOKEN="${ADMIN_TOKEN}" \
+  -v /vw-data:/data \
+  -p 127.0.0.1:8000:80 \
+  vaultwarden/server:latest
+
+# Install Caddy
+apt install -y debian-keyring debian-archive-keyring apt-transport-https
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' \
+  | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' \
+  | tee /etc/apt/sources.list.d/caddy-stable.list
+
+apt update -y
+apt install -y caddy
+
+# Configure Caddy with sslip.io
+PUBLIC_IP=$(curl -s http://checkip.amazonaws.com)
+
+cat <<EOF > /etc/caddy/Caddyfile
+${PUBLIC_IP}.sslip.io {
+  reverse_proxy 127.0.0.1:8000
+}
+EOF
+
+systemctl reload caddy
