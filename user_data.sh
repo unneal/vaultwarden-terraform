@@ -36,7 +36,7 @@ apt install -y caddy
 PUBLIC_IP=$(curl -s http://checkip.amazonaws.com)
 
 cat <<EOF > /etc/caddy/Caddyfile
-${PUBLIC_IP}.sslip.io {
+$${PUBLIC_IP}.sslip.io {
   reverse_proxy 127.0.0.1:8000
 }
 EOF
