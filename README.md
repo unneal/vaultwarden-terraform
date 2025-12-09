@@ -315,6 +315,7 @@ This repository is designed for:
 - Installing and configuring AWS CLI
 - Installing terraform
 - Cloning this repo to a directory of your choice on your local machine
+- Make sure .tfvars.example file is updated as per instructions in it
 - Running the command "terraform init" in the same (terraform) directory
 - terraform plan
 - terraform apply
