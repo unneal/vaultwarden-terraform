@@ -123,7 +123,7 @@ This must return your AWS account ID and IAM username.
 
 ## Part 3 — Obtain the Source Code
 ### 5. Clone the Repository
-git clone https://github.com/unneal/vaultwarden-terraform.git
+git clone https://github.com/unneal/vaultwarden-terraform
 cd vaultwarden-terraform
 
 
