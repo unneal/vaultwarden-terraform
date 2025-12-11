@@ -1,14 +1,3 @@
-data "aws_ami" "ubuntu" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
-  }
-
-  owners = ["099720109477"]
-}
-
 resource "aws_instance" "vaultwarden" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.instance_type
@@ -17,11 +6,21 @@ resource "aws_instance" "vaultwarden" {
   subnet_id              = data.aws_subnet.default.id
   vpc_security_group_ids = [aws_security_group.vaultwarden_sg.id]
 
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
+
+  root_block_device {
+    encrypted = true
+  }
+
   user_data = templatefile("${path.module}/user_data.sh", {
     ADMIN_TOKEN = var.admin_token
   })
 
   tags = {
-    Name = "vaultwarden-server"
+    Name = "vaultwarden"
   }
 }

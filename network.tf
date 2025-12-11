@@ -3,6 +3,6 @@ data "aws_vpc" "default" {
 }
 
 data "aws_subnet" "default" {
-  default_for_az = true
+  default_for_az    = true
   availability_zone = "${var.aws_region}a"
 }

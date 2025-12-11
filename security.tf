@@ -1,37 +1,25 @@
 resource "aws_security_group" "vaultwarden_sg" {
   name        = "vaultwarden-sg"
-  description = "Security group for Vaultwarden"
+  description = "Security group for Vaultwarden HTTPS access"
   vpc_id      = data.aws_vpc.default.id
 
+  # HTTPS from the internet (necessary for a public-facing password manager UI).
+  # tfsec:ignore:aws-ec2-no-public-ingress-sgr
   ingress {
-    description = "SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # tighten later if needed
-  }
-
-  ingress {
-    description = "HTTP"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "HTTPS"
+    description = "HTTPS from Internet"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Egress restricted to HTTPS only.
+  # tfsec:ignore:aws-ec2-no-public-egress-sgr
   egress {
-    description = "All outbound"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    description = "Outbound HTTPS only"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
