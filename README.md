@@ -30,7 +30,7 @@ This setup is designed so any organization with small-medium scale password mana
 
 ---
 
-## Part 1 — Install Required Tools on macOS
+## Part 1 - Install Required Tools on macOS
 
 These steps assume a completely fresh Mac environment.
 
@@ -70,7 +70,7 @@ Each command must return a valid version number.
 
 ---
 
-## Part 2 — GCP Account Setup (One-Time)
+## Part 2 - GCP Account Setup (One-Time)
 
 ### 3. Create or Select a GCP Project
 
@@ -109,7 +109,7 @@ You should see your account email marked with an asterisk (*).
 
 ---
 
-## Part 3 — SSH Key Setup
+## Part 3 - SSH Key Setup
 
 ### 6. Generate SSH Key Pair
 
@@ -131,7 +131,7 @@ Copy this entire output — you'll need it for `terraform.tfvars`.
 
 ---
 
-## Part 4 — Obtain the Source Code
+## Part 4 - Obtain the Source Code
 
 ### 7. Clone the Repository
 
@@ -142,7 +142,7 @@ cd vaultwarden-terraform
 
 ---
 
-## Part 5 — Secure Deployment Configuration
+## Part 5 - Secure Deployment Configuration
 
 ### 8. Create Terraform Variables File
 
@@ -180,7 +180,7 @@ Copy the output and replace `admin_token` in `terraform.tfvars`.
 
 ---
 
-## Part 6 — Deploy Vaultwarden
+## Part 6 - Deploy Vaultwarden
 
 ### 10. Initialize Terraform
 
@@ -218,7 +218,7 @@ ssh_command = "gcloud compute ssh ubuntu@vaultwarden --zone=us-central1-a"
 
 ---
 
-## Part 7 — Initial Vaultwarden Setup
+## Part 7 - Initial Vaultwarden Setup
 
 ### 13. Wait for Services to Start
 
@@ -248,7 +248,7 @@ Enter the admin token you generated earlier.
 
 ---
 
-## Part 8 — Health Verification
+## Part 8 - Health Verification
 
 Confirm all of the following:
 
@@ -260,7 +260,7 @@ Confirm all of the following:
 
 ---
 
-## Part 9 — Cost Awareness
+## Part 9 - Cost Awareness
 
 This deployment includes:
 
@@ -280,7 +280,7 @@ If you stay within free tier limits and use us-central1, costs may be **$0-3/mon
 
 ---
 
-## Part 10 — Destroying Infrastructure
+## Part 10 - Destroying Infrastructure
 
 To permanently delete all deployed resources:
 
@@ -294,7 +294,7 @@ Confirm by typing: `yes`
 
 ---
 
-## Part 11 — Common Issues
+## Part 11 - Common Issues
 
 ### Issue: "Error 403: Compute Engine API has not been used"
 
@@ -337,7 +337,7 @@ Verify the token in `terraform.tfvars` matches exactly what you're entering (no 
 
 ---
 
-## Part 12 — Maintenance
+## Part 12 - Maintenance
 
 ### Viewing Logs
 
