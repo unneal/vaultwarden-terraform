@@ -1,4 +1,4 @@
-# Vaultwarden on GCP — Fully Automated with Terraform
+# Vaultwarden on GCP - Fully Automated with Terraform
 
 This repository deploys a secure, encrypted, self-hosted password manager (Vaultwarden) on Google Cloud Platform using Terraform (Infrastructure as Code).
 
