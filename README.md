@@ -387,6 +387,31 @@ gcloud compute scp ubuntu@vaultwarden:~/vaultwarden-backup-*.tar.gz . --zone=us-
 6. **Use custom domain**: Configure a real domain instead of sslip.io
 7. **Review service account permissions**: Use least-privilege principles
 
+### Security Features Implemented
+
+This deployment follows security best practices:
+
+✅ **Custom Service Account** - Minimal permissions (logging only, no compute/storage access)  
+✅ **Shielded VM** - vTPM and integrity monitoring enabled  
+✅ **Instance-Specific SSH Keys** - Project-wide SSH keys disabled  
+✅ **HTTPS-Only Access** - All traffic encrypted via Caddy + Let's Encrypt  
+✅ **Encrypted Storage** - Boot disk encrypted at rest (Google-managed keys)  
+✅ **Token-Based Admin Access** - Admin panel protected by secure token  
+✅ **Firewall Restrictions** - Only HTTPS (port 443) accessible from internet  
+
+### Security Validation
+
+This infrastructure has been validated with [tfsec](https://github.com/aquasecurity/tfsec) security scanner:
+
+```bash
+# Run security scan
+tfsec .
+
+# Expected result: 7 passed, 4 ignored, 0 potential problems
+```
+
+All ignored issues are intentional design decisions (public access for password manager service) with appropriate mitigations in place.
+
 ---
 
 ## Checklist

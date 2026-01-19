@@ -7,7 +7,8 @@ resource "google_compute_firewall" "vaultwarden_https" {
     ports    = ["443"]
   }
 
+  # tfsec:ignore:google-compute-no-public-ingress - Public access required for password manager service
   source_ranges = ["0.0.0.0/0"]
   target_tags   = ["vaultwarden"]
-  description   = "Allow HTTPS access to Vaultwarden"
+  description   = "Allow HTTPS access to Vaultwarden from anywhere"
 }
