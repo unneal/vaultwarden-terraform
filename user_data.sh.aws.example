@@ -1,3 +1,5 @@
+#This file contains user_data.sh for AWS
+
 #!/bin/bash
 set -e
 
@@ -19,11 +21,10 @@ docker run -d \
   -e ADMIN_TOKEN="${ADMIN_TOKEN}" \
   -v /vw-data:/data \
   -p 127.0.0.1:8000:80 \
-  --restart unless-stopped \
   vaultwarden/server:latest
 
 # Install Caddy
-apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
+apt install -y debian-keyring debian-archive-keyring apt-transport-https
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' \
   | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
 
@@ -33,10 +34,9 @@ curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' \
 apt update -y
 apt install -y caddy
 
-# Get public IP from GCP metadata service
-PUBLIC_IP=$(curl -s -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip)
-
 # Configure Caddy with sslip.io
+PUBLIC_IP=$(curl -s http://checkip.amazonaws.com)
+
 cat <<EOF > /etc/caddy/Caddyfile
 $${PUBLIC_IP}.sslip.io {
   reverse_proxy 127.0.0.1:8000

@@ -1,42 +1,36 @@
-data "aws_ami" "ubuntu" {
-  most_recent = true
+resource "google_compute_instance" "vaultwarden" {
+  name         = "vaultwarden"
+  machine_type = var.machine_type
+  zone         = var.gcp_zone
 
-  owners = ["099720109477"] # Canonical
+  tags = ["vaultwarden"]
 
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  boot_disk {
+    initialize_params {
+      image = "ubuntu-os-cloud/ubuntu-2204-lts"
+      size  = 10
+      type  = "pd-standard"
+    }
   }
 
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
-
-resource "aws_instance" "vaultwarden" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
-  key_name      = var.key_name
-
-  subnet_id              = data.aws_subnet.default.id
-  vpc_security_group_ids = [aws_security_group.vaultwarden_sg.id]
-
-  metadata_options {
-    http_endpoint               = "enabled"
-    http_tokens                 = "required"
-    http_put_response_hop_limit = 1
+  network_interface {
+    network = data.google_compute_network.default.name
+    access_config {
+      // Ephemeral public IP
+    }
   }
 
-  root_block_device {
-    encrypted = true
+  metadata = {
+    ssh-keys = "ubuntu:${var.ssh_public_key}"
   }
 
-  user_data = templatefile("${path.module}/user_data.sh", {
+  metadata_startup_script = templatefile("${path.module}/user_data.sh", {
     ADMIN_TOKEN = var.admin_token
   })
 
-  tags = {
-    Name = "vaultwarden"
+  service_account {
+    scopes = ["cloud-platform"]
   }
+
+  allow_stopping_for_update = true
 }

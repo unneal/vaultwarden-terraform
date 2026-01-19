@@ -1,20 +1,20 @@
-# Vaultwarden on AWS — Fully Automated with Terraform
+# Vaultwarden on GCP — Fully Automated with Terraform
 
-This repository deploys a secure, encrypted, self-hosted password manager (Vaultwarden) on AWS using Terraform (Infrastructure as Code).
+This repository deploys a secure, encrypted, self-hosted password manager (Vaultwarden) on Google Cloud Platform using Terraform (Infrastructure as Code).
 
-This setup is designed so any organization with small-medium scale password management requirements across multiple teams can deploy and manage Vaultwarden without prior experience with Terraform, cloud infrastructure, or command-line tooling. All steps assume a clean macOS system (although the same is absoutely compatible and configured for Windows OS) with no prior tooling installed.
+This setup is designed so any organization with small-medium scale password management requirements across multiple teams can deploy and manage Vaultwarden without prior experience with Terraform, cloud infrastructure, or command-line tooling. All steps assume a clean macOS system (although the same is absolutely compatible and configured for Windows OS) with no prior tooling installed.
 
-This deployment creates real AWS infrastructure and may incur costs.
+**This deployment creates real GCP infrastructure and may incur costs.**
 
 ---
 
 ## What This Setup Provides
 
 - Self-hosted Vaultwarden server  
-- AWS EC2-based deployment  
+- GCP Compute Engine deployment
 - Automatic HTTPS using sslip.io  
 - Infrastructure fully managed using Terraform  
-- Free-tier compatible instance type (t3.micro)  
+- Free-tier compatible instance type (e2-micro)
 - Secure admin panel protected using token authentication  
 - Fully reproducible deployment from code  
 
@@ -22,10 +22,11 @@ This deployment creates real AWS infrastructure and may incur costs.
 
 ## Important Preconditions
 
-- You must have access to the AWS root account or an IAM administrator account  
+- You must have a GCP account with billing enabled
+- You must have Owner or Editor permissions on the GCP project
 - Secrets must never be committed to GitHub  
 - This repository is already configured to prevent secret leaks  
-- AWS usage may incur monthly charges  
+- GCP usage may incur monthly charges (~$3-9/month, potentially free with free tier)
 
 ---
 
@@ -39,289 +40,515 @@ Open **Terminal** and run:
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
+```
 
 Restart Terminal after installation completes.
 
 Verify the installation:
 
+```bash
 brew --version
+```
 
-### 2. Install Git, Terraform, and AWS CLI
+### 2. Install Git, Terraform, and gcloud CLI
 
 Run:
 
-brew install git terraform awscli
-
+```bash
+brew install git terraform google-cloud-sdk
+```
 
 Verify each installation:
 
+```bash
 git --version
 terraform --version
-aws --version
-
+gcloud --version
+```
 
 Each command must return a valid version number.
 
+---
 
-## Part 2 — AWS Account Setup (One-Time)
-### 3. Create an IAM User for Terraform
+## Part 2 — GCP Account Setup (One-Time)
 
-Log in to the AWS Console as the root user.
+### 3. Create or Select a GCP Project
 
-Navigate to:
+1. Go to [GCP Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Note your **Project ID** (not the project name)
+4. Enable billing for the project
 
-IAM → Users → Create user
+### 4. Enable Required APIs
 
+Run the following commands to enable necessary APIs:
 
-Example username:
+```bash
+gcloud config set project YOUR-PROJECT-ID
 
-terraform-cdf
+gcloud services enable compute.googleapis.com
+```
 
+### 5. Authenticate with GCP
 
-Enable Programmatic access.
+Run:
 
-Attach the following policies:
+```bash
+gcloud auth application-default login
+```
 
-AmazonEC2FullAccess
-
-AmazonVPCFullAccess
-
-AmazonS3FullAccess
-
-IAMReadOnlyAccess
-
-Complete user creation.
-
-Download the Access Key ID and Secret Access Key immediately.
-The secret key cannot be retrieved again.
-
-### 4. Configure AWS Credentials Locally
-
-In Terminal, run:
-
-aws configure
-
-
-Enter the following:
-
-AWS Access Key ID
-
-AWS Secret Access Key
-
-Region: us-east-1
-
-Output format: json
+This will open a browser window for authentication. Complete the OAuth flow.
 
 Verify authentication:
 
-aws sts get-caller-identity
+```bash
+gcloud auth list
+```
 
+You should see your account email marked with an asterisk (*).
 
-This must return your AWS account ID and IAM username.
+---
 
+## Part 3 — SSH Key Setup
 
-## Part 3 — Obtain the Source Code
-### 5. Clone the Repository
+### 6. Generate SSH Key Pair
+
+If you don't already have an SSH key, generate one:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "vaultwarden@gcp" -f ~/.ssh/vaultwarden-gcp
+```
+
+Press Enter to accept defaults (no passphrase for automated access).
+
+View your public key:
+
+```bash
+cat ~/.ssh/vaultwarden-gcp.pub
+```
+
+Copy this entire output — you'll need it for `terraform.tfvars`.
+
+---
+
+## Part 4 — Obtain the Source Code
+
+### 7. Clone the Repository
+
+```bash
 git clone https://github.com/unneal/vaultwarden-terraform
 cd vaultwarden-terraform
+```
 
+---
 
-## Part 4 — Secure Deployment Configuration
-### 6. Create Terraform Variables File
+## Part 5 — Secure Deployment Configuration
 
-Create a file named:
+### 8. Create Terraform Variables File
 
-terraform.tfvars
+Create a file named `terraform.tfvars` (this file is gitignored):
 
+```bash
+cp terraform.tfvars.example terraform.tfvars
+```
 
-Add the following contents:
+Edit `terraform.tfvars` with your values:
 
-aws_region    = "us-east-1"
-instance_type = "t3.micro"
-key_name      = "vaultwarden-key"
-admin_token   = "REPLACE-WITH-A-LONG-RANDOM-SECURE-TOKEN"
+```hcl
+gcp_project_id = "your-gcp-project-id"
+gcp_region     = "us-central1"
+gcp_zone       = "us-central1-a"
 
+machine_type = "e2-micro"
 
-Generate a secure admin token using:
+ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EA... your-email@example.com"
 
+admin_token = "YOUR-GENERATED-SECURE-TOKEN-HERE"
+```
+
+### 9. Generate Secure Admin Token
+
+Generate a secure admin token:
+
+```bash
 openssl rand -hex 32
+```
 
+Copy the output and replace `admin_token` in `terraform.tfvars`.
 
-Replace the placeholder with the generated value.
+**This file must never be committed to version control.**
 
-This file is intentionally ignored by Git and must never be committed.
+---
 
-### 7. Create EC2 SSH Key Pair
+## Part 6 — Deploy Vaultwarden
 
-Run:
+### 10. Initialize Terraform
 
-aws ec2 create-key-pair \
-  --key-name vaultwarden-key \
-  --query "KeyMaterial" \
-  --output text > vaultwarden-key.pem
-
-
-Secure the key file:
-
-chmod 400 vaultwarden-key.pem
-
-
-## Part 5 — Deploy Vaultwarden
-### 8. Initialize Terraform
+```bash
 terraform init
+```
 
-### 9. Preview Infrastructure
+### 11. Preview Infrastructure
+
+```bash
 terraform plan
+```
 
+Review the resources that will be created:
+- Compute Engine instance (e2-micro)
+- Firewall rule (HTTPS access)
 
-Review the resources that will be created.
+### 12. Deploy Infrastructure
 
-### 10. Deploy Infrastructure
+```bash
 terraform apply
+```
 
+When prompted, type: `yes`
 
-When prompted, type:
+Deployment takes approximately 3-5 minutes.
 
-yes
+After completion, Terraform will output:
 
+```
+public_ip = "34.xxx.xxx.xxx"
+vaultwarden_url = "https://34.xxx.xxx.xxx.sslip.io"
+ssh_command = "gcloud compute ssh ubuntu@vaultwarden --zone=us-central1-a"
+```
 
-After 2–4 minutes, Terraform will output a public IP address and Vaultwarden URL.
+---
 
-Example:
+## Part 7 — Initial Vaultwarden Setup
 
-vaultwarden_url = "https://18.xxx.xxx.xxx.sslip.io"
+### 13. Wait for Services to Start
 
+After `terraform apply` completes, wait 2-3 minutes for Docker services to fully initialize.
 
-## Part 6 — Initial Vaultwarden Setup
-### 11. Open Vaultwarden
+### 14. Open Vaultwarden
 
-Open the provided HTTPS URL in a browser.
+Open the provided HTTPS URL in a browser (from `vaultwarden_url` output).
 
-### 12. Create the First User Account
+### 15. Create the First User Account
 
-Click Create Account and log in.
+1. Click **Create Account**
+2. Enter your email and master password
+3. Log in with your credentials
 
-### 13. Access the Admin Panel
+### 16. Access the Admin Panel
 
-Navigate to:
+Navigate to the admin URL (from `vaultwarden_url` output + `/admin`).
 
-https://YOUR-IP.sslip.io/admin
+Enter the admin token you generated earlier.
 
+**Important Admin Actions:**
 
-Enter the admin token created earlier.
+- Disable public signups after creating necessary accounts
+- Configure organizational policies
+- Review security settings
 
-Inside the admin panel:
+---
 
-Disable public signups
+## Part 8 — Health Verification
 
-Configure organizational policies if required
-
-
-## Part 7 — Health Verification
 Confirm all of the following:
 
-Login works
+✓ Login works  
+✓ Vault entries can be created  
+✓ HTTPS encryption is active (padlock in browser)  
+✓ Application remains stable across refreshes  
+✓ Admin panel is accessible with token  
 
-Vault entries can be created
+---
 
-HTTPS encryption is active
+## Part 9 — Cost Awareness
 
-Application remains stable across refreshes
-
-
-## Part 8 — Cost Awareness
 This deployment includes:
 
-One t3.micro EC2 instance
+- One e2-micro Compute Engine instance (~$6-7/month)
+- 10 GB standard persistent disk (~$0.40/month)
+- Ephemeral external IP address (free)
+- Minimal egress traffic
 
-No load balancer
+**Estimated monthly cost: ~$6-8 USD**
 
-No managed database
+**GCP Free Tier includes:**
+- 1 e2-micro instance in select regions (us-west1, us-central1, us-east1)
+- 30 GB-months standard persistent disk
+- 1 GB network egress per month
 
-Minimal attached storage
+If you stay within free tier limits and use us-central1, costs may be **$0-3/month**.
 
-Estimated monthly cost is approximately USD 6–9.
+---
 
+## Part 10 — Destroying Infrastructure
 
-## Part 9 — Destroying Infrastructure
 To permanently delete all deployed resources:
 
+```bash
 terraform destroy
+```
 
+Confirm by typing: `yes`
 
-Confirm by typing:
+**⚠️ This permanently deletes the server and all stored vault data.**
 
-yes
+---
 
+## Part 11 — Common Issues
 
-This permanently deletes the server and all stored data.
+### Issue: "Error 403: Compute Engine API has not been used"
 
+**Solution:**
 
-## Part 10 — Common Issues
-Instance Type Not Allowed
+```bash
+gcloud services enable compute.googleapis.com
+```
 
-Ensure:
+### Issue: "SSH key not working"
 
-instance_type = "t3.micro"
+**Solution:**
 
-Key Pair Not Found
+Ensure your public key in `terraform.tfvars` is the complete output of:
 
-Run:
+```bash
+cat ~/.ssh/vaultwarden-gcp.pub
+```
 
-aws ec2 describe-key-pairs
+The format should be: `ssh-rsa AAAAB3NzaC1... user@hostname`
 
+### Issue: "Page loads indefinitely"
 
-If missing, re-create the key.
+**Solution:**
 
-Vaultwarden Page Loads Indefinitely
+Wait 3-5 minutes after `terraform apply` for Docker services to complete setup.
 
-Wait 2–3 minutes after deployment for Docker services to complete first-time setup.
+Check logs:
 
-# Deleting everything on AWS
+```bash
+gcloud compute ssh ubuntu@vaultwarden --zone=us-central1-a
+sudo journalctl -u google-startup-scripts -f
+```
 
-Follow the steps below to delete everything on AWS for:
+### Issue: "Admin token not working"
 
-- Changing AWS accounts
-- Any maintenance work
-- No longer using Vaultwarden
-- No longer using this solution 
+**Solution:**
 
----------------------------
-terraform destroy
+Verify the token in `terraform.tfvars` matches exactly what you're entering (no extra spaces or quotes).
 
-yes
----------------------------
+---
 
-# Intended Users
+## Part 12 — Maintenance
+
+### Viewing Logs
+
+```bash
+gcloud compute ssh ubuntu@vaultwarden --zone=us-central1-a
+sudo docker logs -f vaultwarden
+```
+
+### Updating Vaultwarden
+
+```bash
+gcloud compute ssh ubuntu@vaultwarden --zone=us-central1-a
+cd /
+sudo docker pull vaultwarden/server:latest
+sudo docker stop vaultwarden
+sudo docker rm vaultwarden
+# Container will restart automatically via startup script on next boot
+sudo reboot
+```
+
+### Backup Data
+
+The vault data is stored in `/vw-data` on the VM.
+
+To create a backup:
+
+```bash
+gcloud compute ssh ubuntu@vaultwarden --zone=us-central1-a
+sudo tar -czf vaultwarden-backup-$(date +%Y%m%d).tar.gz /vw-data
+```
+
+Download backup to local machine:
+
+```bash
+gcloud compute scp ubuntu@vaultwarden:~/vaultwarden-backup-*.tar.gz . --zone=us-central1-a
+```
+
+---
+
+## Security Recommendations
+
+1. **Restrict SSH access**: Update firewall rule to allow only your IP
+2. **Enable 2FA**: Configure two-factor authentication for all users
+3. **Regular backups**: Automate vault data backups to Google Cloud Storage
+4. **Monitor logs**: Set up GCP logging and monitoring alerts
+5. **Disable signups**: After creating accounts, disable public registration
+6. **Use custom domain**: Configure a real domain instead of sslip.io
+7. **Review service account permissions**: Use least-privilege principles
+
+---
+
+## Checklist
+
+- [ ] Install Homebrew
+- [ ] Install Git, Terraform, gcloud CLI
+- [ ] Create or select GCP project
+- [ ] Enable Compute Engine API
+- [ ] Authenticate with `gcloud auth application-default login`
+- [ ] Generate SSH key pair
+- [ ] Clone repository
+- [ ] Create and configure `terraform.tfvars`
+- [ ] Generate secure admin token
+- [ ] Run `terraform init`
+- [ ] Run `terraform plan`
+- [ ] Run `terraform apply`
+- [ ] Wait 3-5 minutes for services
+- [ ] Access Vaultwarden URL
+- [ ] Create first user account
+- [ ] Access admin panel
+- [ ] Disable public signups
+- [ ] Enable 2FA for users
+
+---
+
+## Intended Users
 
 This repository is designed for:
 
-- CDF internal security team
-
-- Users with no Terraform or AWS background
-
-- Secure organizational credential storage
-
-- Cloud-hosted password management
-
+- Organizations needing secure password management
+- Users with no Terraform or GCP background
 - Compliance-aligned infrastructure deployment
+- Cost-conscious deployments leveraging GCP free tier
+- Community Dreams Foundation internal security team
 
+---
 
-# Checklist
+## Architecture
 
-- Installing brew
-- Creating an IAM user on AWS > Security Credentials > Copy Access Key & Secret Access Key 
-- Installing and configuring AWS CLI
-- Installing terraform
-- Cloning this repo to a directory of your choice on your local machine
-- Make sure .tfvars.example file is updated as per instructions in it
-- Running the command "terraform init" in the same (terraform) directory
-- terraform plan
-- terraform apply
+```
+Internet
+    |
+    v
+[GCP Firewall Rule]
+    |
+    +-- Allow HTTPS (443)
+    |
+    v
+[Compute Engine Instance - e2-micro]
+    |
+    +-- Caddy (Reverse Proxy + Auto HTTPS)
+    |       |
+    |       v
+    +-- Vaultwarden (Docker Container)
+            |
+            v
+    [Persistent Disk: /vw-data]
+```
 
+---
 
+## Technical Details
 
-Author:
-Anil Kumar Gorthi
+- **OS**: Ubuntu 22.04 LTS
+- **Docker**: Latest stable
+- **Vaultwarden**: Latest from Docker Hub
+- **Reverse Proxy**: Caddy (automatic HTTPS)
+- **SSL**: Automatic via sslip.io + Let's Encrypt
+- **Network**: Default VPC
+- **Firewall**: HTTPS-only ingress
+
+---
+
+## Migrating from AWS
+
+If you're migrating from the AWS version of this deployment:
+
+1. **Backup your AWS vault data** before destroying
+2. **Export vault data** from AWS Vaultwarden admin panel
+3. Deploy GCP infrastructure using this repository
+4. **Import vault data** to GCP Vaultwarden admin panel
+5. Verify all data migrated successfully
+6. Destroy AWS infrastructure
+
+---
+
+## Migrating from GCP to AWS
+
+This repository includes AWS deployment templates as backup files (`.aws.example` extension). To migrate from GCP back to AWS:
+
+### Quick Migration Steps:
+
+1. **Backup your GCP vault data** (export from admin panel)
+
+2. **Replace Terraform files** with AWS versions:
+   ```bash
+   cp provider.tf.aws.example provider.tf
+   cp variables.tf.aws.example variables.tf
+   cp compute.tf.aws.example compute.tf
+   cp network.tf.aws.example network.tf
+   cp security.tf.aws.example security.tf
+   cp outputs.tf.aws.example outputs.tf
+   ```
+
+3. **Setup AWS CLI and credentials**:
+   ```bash
+   brew install awscli
+   aws configure
+   # Enter AWS Access Key ID, Secret Access Key, region (us-east-1)
+   ```
+
+4. **Create EC2 SSH key pair**:
+   ```bash
+   aws ec2 create-key-pair \
+     --key-name vaultwarden-key \
+     --query "KeyMaterial" \
+     --output text > vaultwarden-key.pem
+   chmod 400 vaultwarden-key.pem
+   ```
+
+5. **Create `terraform.tfvars` for AWS**:
+   ```hcl
+   aws_region    = "us-east-1"
+   instance_type = "t3.micro"
+   key_name      = "vaultwarden-key"
+   admin_token   = "your-secure-token"
+   ```
+
+6. **Clean state and deploy**:
+   ```bash
+   rm terraform.tfstate*
+   terraform init -upgrade
+   terraform plan
+   terraform apply
+   ```
+
+7. **Import vault data** to AWS Vaultwarden instance
+
+8. **Destroy GCP infrastructure** once verified:
+   ```bash
+   # Switch back to GCP files temporarily
+   terraform destroy
+   ```
+
+### AWS Setup Requirements:
+
+- AWS account with billing enabled
+- IAM user with EC2, VPC permissions
+- AWS CLI configured with credentials
+- EC2 key pair created in target region
+
+The `.aws.example` files contain the complete AWS deployment configuration and can be used as-is after renaming.
+
+---
+
+## Author
+
+Anil Kumar Gorthi  
 anilnotanneal@gmail.com
+
+---
+
+## License
+
+MIT License - See LICENSE file for details

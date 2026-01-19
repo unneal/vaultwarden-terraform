@@ -1,3 +1,5 @@
+#This file contains user_data.sh for GCP
+
 #!/bin/bash
 set -e
 

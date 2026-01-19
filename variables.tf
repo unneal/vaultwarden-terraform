@@ -1,17 +1,28 @@
-variable "aws_region" {
-  description = "AWS region"
+variable "gcp_project_id" {
+  description = "GCP project ID"
   type        = string
-  default     = "us-east-1"
 }
 
-variable "instance_type" {
-  description = "EC2 instance type"
+variable "gcp_region" {
+  description = "GCP region"
   type        = string
-  default     = "t3.micro"
+  default     = "us-central1"
 }
 
-variable "key_name" {
-  description = "SSH key pair name"
+variable "gcp_zone" {
+  description = "GCP zone"
+  type        = string
+  default     = "us-central1-a"
+}
+
+variable "machine_type" {
+  description = "GCP machine type"
+  type        = string
+  default     = "e2-micro"
+}
+
+variable "ssh_public_key" {
+  description = "SSH public key for instance access"
   type        = string
 }
 

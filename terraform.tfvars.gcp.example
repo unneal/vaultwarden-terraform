@@ -1,15 +1,8 @@
-# ===== GCP Configuration =====
-
-# Change this file's name to .tfvars (remove .example)
-
-cloud_provider = "gcp"
 
 gcp_project_id     = "your-gcp-project-id"
 gcp_region         = "us-central1"
 gcp_zone           = "us-central1-a"
 gcp_machine_type   = "e2-micro"
-gcp_ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EA... your-email@example.com"
+gcp_ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EA... your-email@example.com" #generate a public key for your GCP Compute Instance
 
-admin_token = "REPLACE-WITH-SECURE-TOKEN-FROM-openssl-rand-hex-32"
-
-# AWS variables not needed when cloud_provider = "gcp"
+admin_token = "REPLACE-WITH-SECURE-TOKEN-FROM-openssl-rand-hex-32" #either generate a key and put it here or put a plaintext key when testing

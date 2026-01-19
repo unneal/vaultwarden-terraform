@@ -1,8 +1,3 @@
-data "aws_vpc" "default" {
-  default = true
-}
-
-data "aws_subnet" "default" {
-  default_for_az    = true
-  availability_zone = "${var.aws_region}a"
+data "google_compute_network" "default" {
+  name = "default"
 }
