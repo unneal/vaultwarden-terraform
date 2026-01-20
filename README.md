@@ -6,7 +6,7 @@ This setup is designed so any organization with small-medium scale password mana
 
 **This deployment creates real GCP infrastructure and may incur costs. [[Disclaimer](#disclaimer)]**
 
----
+<br>
 
 ## What This Setup Provides
 
@@ -18,7 +18,7 @@ This setup is designed so any organization with small-medium scale password mana
 - Secure admin panel protected using token authentication  
 - Fully reproducible deployment from code  
 
----
+<br>
 
 ## Important Preconditions
 
@@ -28,7 +28,7 @@ This setup is designed so any organization with small-medium scale password mana
 - This repository is already configured to prevent secret leaks  
 - GCP usage may incur monthly charges (~$3-9/month, potentially free with free tier)
 
----
+<br>
 
 ## Part 1 - Install Required Tools on macOS
 
@@ -68,7 +68,7 @@ gcloud --version
 
 Each command must return a valid version number.
 
----
+<br>
 
 ## Part 2 - GCP Account Setup (One-Time)
 
@@ -107,7 +107,7 @@ gcloud auth list
 
 You should see your account email marked with an asterisk (*).
 
----
+<br>
 
 ## Part 3 - SSH Key Setup
 
@@ -129,7 +129,7 @@ cat ~/.ssh/vaultwarden-gcp.pub
 
 Copy this entire output — you'll need it for `terraform.tfvars`.
 
----
+<br>
 
 ## Part 4 - Obtain the Source Code
 
@@ -140,7 +140,7 @@ git clone https://github.com/unneal/vaultwarden-terraform
 cd vaultwarden-terraform
 ```
 
----
+<br>
 
 ## Part 5 - Secure Deployment Configuration
 
@@ -178,7 +178,7 @@ Copy the output and replace `admin_token` in `terraform.tfvars`.
 
 **This file must never be committed to version control.**
 
----
+<br>
 
 ## Part 6 - Deploy Vaultwarden
 
@@ -216,7 +216,7 @@ vaultwarden_url = "https://34.xxx.xxx.xxx.sslip.io"
 ssh_command = "gcloud compute ssh ubuntu@vaultwarden --zone=us-central1-a"
 ```
 
----
+<br>
 
 ## Part 7 - Initial Vaultwarden Setup
 
@@ -246,7 +246,7 @@ Enter the admin token you generated earlier.
 - Configure organizational policies
 - Review security settings
 
----
+<br>
 
 ## Part 8 - Health Verification
 
@@ -258,7 +258,7 @@ Confirm all of the following:
 ✓ Application remains stable across refreshes  
 ✓ Admin panel is accessible with token  
 
----
+<br>
 
 ## Part 9 - Cost Awareness
 
@@ -278,7 +278,7 @@ This deployment includes:
 
 If you stay within free tier limits and use us-central1, costs may be **$0-3/month**.
 
----
+<br>
 
 ## Part 10 - Destroying Infrastructure
 
@@ -292,7 +292,7 @@ Confirm by typing: `yes`
 
 **⚠️ This permanently deletes the server and all stored vault data.**
 
----
+<br>
 
 ## Part 11 - Common Issues
 
@@ -335,7 +335,7 @@ sudo journalctl -u google-startup-scripts -f
 
 Verify the token in `terraform.tfvars` matches exactly what you're entering (no extra spaces or quotes).
 
----
+<br>
 
 ## Part 12 - Maintenance
 
@@ -375,7 +375,7 @@ Download backup to local machine:
 gcloud compute scp ubuntu@vaultwarden:~/vaultwarden-backup-*.tar.gz . --zone=us-central1-a
 ```
 
----
+<br>
 
 ## Security Recommendations
 
@@ -412,7 +412,7 @@ tfsec .
 
 All ignored issues are intentional design decisions (public access for password manager service) with appropriate mitigations in place.
 
----
+<br>
 
 ## Checklist
 
@@ -435,7 +435,7 @@ All ignored issues are intentional design decisions (public access for password 
 - [ ] Disable public signups
 - [ ] Enable 2FA for users
 
----
+<br>
 
 ## Intended Users
 
@@ -447,7 +447,7 @@ This repository is designed for:
 - Cost-conscious deployments leveraging GCP free tier
 - Community Dreams Foundation internal security team
 
----
+<br>
 
 ## Architecture
 
@@ -471,7 +471,7 @@ Internet
     [Persistent Disk: /vw-data]
 ```
 
----
+<br>
 
 ## Technical Details
 
@@ -483,7 +483,7 @@ Internet
 - **Network**: Default VPC
 - **Firewall**: HTTPS-only ingress
 
----
+<br>
 
 ## Migrating from AWS
 
@@ -496,7 +496,7 @@ If you're migrating from the AWS version of this deployment:
 5. Verify all data migrated successfully
 6. Destroy AWS infrastructure
 
----
+<br>
 
 ## Migrating from GCP to AWS
 
@@ -565,7 +565,7 @@ This repository includes AWS deployment templates as backup files (`.aws.example
 
 The `.aws.example` files contain the complete AWS deployment configuration and can be used as-is after renaming.
 
----
+<br>
 
 ## Refer
 
@@ -574,13 +574,13 @@ The `.aws.example` files contain the complete AWS deployment configuration and c
 - [AWS Documentation](https://docs.aws.amazon.com/)
 - [Google Cloud Platform Documentation](https://docs.cloud.google.com/docs)
 
----
+<br>
 
 ## Contributors
 
 [![Contributors Avatars](https://contributors-img.web.app/image?repo=unneal/vaultwarden-terraform)](https://github.com/unneal/vaultwarden-terraform/graphs/contributors)
 
----
+<br>
 
 ## Disclaimer
 
@@ -590,7 +590,7 @@ This is a personal project created to fulfill specific infrastructure deployment
 
 **Please note:** Review all code before use. The authors/contributors of this repository cannot be held liable for any issues, losses, or damages that may occur from the use of this infrastructure. This includes, but is not limited to, cloud service provider billing costs, passwords, attachments, and other sensitive information handled by the deployed services.
 
----
+<br>
 
 ## License
 
