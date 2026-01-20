@@ -567,10 +567,31 @@ The `.aws.example` files contain the complete AWS deployment configuration and c
 
 ---
 
-## Author
+## Refer
 
-Anil Kumar Gorthi  
-anilnotanneal@gmail.com
+Vaultwarden - https://github.com/dani-garcia/vaultwarden/
+Terraform Documentation - https://developer.hashicorp.com/terraform/docs
+AWS Documentation - https://docs.aws.amazon.com/
+Google Cloud Platform Documentation - https://docs.cloud.google.com/docs
+
+---
+
+## Contributors
+
+[![Contributors Count](https://img.shields.io/github/contributors-anon/unneal/vaultwarden-terraform?style=for-the-badge&logo=vaultwarden&color=005AA4)](https://github.com/unneal/vaultwarden-terraform/graphs/contributors)<br>
+[![Contributors Avatars](https://contributors-img.web.app/image?repo=unneal/vaultwarden-terraform)](https://github.com/unneal/vaultwarden-terraform/graphs/contributors)
+
+---
+
+## Disclaimer
+
+**This project is not associated or affiliated in any manner with [Vaultwarden](https://github.com/dani-garcia/vaultwarden/), [Bitwarden](https://bitwarden.com/), or Bitwarden, Inc.**
+
+This is a personal project created to fulfill specific infrastructure deployment needs.
+
+**Please note:** Review all code before use. The authors/contributors of this repository cannot be held liable for any issues, losses, or damages that may occur from the use of this infrastructure. This includes, but is not limited to, passwords, attachments, and other sensitive information handled by the deployed services.
+
+<br>
 
 ---
 
