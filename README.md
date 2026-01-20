@@ -569,16 +569,15 @@ The `.aws.example` files contain the complete AWS deployment configuration and c
 
 ## Refer
 
-Vaultwarden - https://github.com/dani-garcia/vaultwarden/
-Terraform Documentation - https://developer.hashicorp.com/terraform/docs
-AWS Documentation - https://docs.aws.amazon.com/
-Google Cloud Platform Documentation - https://docs.cloud.google.com/docs
+- Vaultwarden - https://github.com/dani-garcia/vaultwarden/
+- Terraform Documentation - https://developer.hashicorp.com/terraform/docs
+- AWS Documentation - https://docs.aws.amazon.com/
+- Google Cloud Platform Documentation - https://docs.cloud.google.com/docs
 
 ---
 
 ## Contributors
 
-[![Contributors Count](https://img.shields.io/github/contributors-anon/unneal/vaultwarden-terraform?style=for-the-badge&logo=vaultwarden&color=005AA4)](https://github.com/unneal/vaultwarden-terraform/graphs/contributors)<br>
 [![Contributors Avatars](https://contributors-img.web.app/image?repo=unneal/vaultwarden-terraform)](https://github.com/unneal/vaultwarden-terraform/graphs/contributors)
 
 ---
