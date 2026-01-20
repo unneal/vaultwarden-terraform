@@ -30,9 +30,12 @@ This setup is designed so any organization with small-medium scale password mana
 
 <br>
 
-## Part 1 - Install Required Tools on macOS
+## Part 1 - Install Required Tools
 
-These steps assume a completely fresh Mac environment.
+Choose your operating system below:
+
+<details>
+<summary><b>macOS Installation</b></summary>
 
 ### 1. Install Homebrew
 
@@ -67,6 +70,181 @@ gcloud --version
 ```
 
 Each command must return a valid version number.
+
+</details>
+
+<details>
+<summary><b>Windows Installation</b></summary>
+
+### 1. Install Chocolatey (Package Manager)
+
+Open **PowerShell** as Administrator and run:
+
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+```
+
+Close and reopen PowerShell as Administrator.
+
+Verify the installation:
+
+```powershell
+choco --version
+```
+
+### 2. Install Git, Terraform, and gcloud CLI
+
+Run:
+
+```powershell
+choco install git terraform gcloudsdk -y
+```
+
+Close and reopen PowerShell (as regular user).
+
+Verify each installation:
+
+```powershell
+git --version
+terraform --version
+gcloud --version
+```
+
+Each command must return a valid version number.
+
+**Alternative (Manual Installation):**
+- Git: [Download from git-scm.com](https://git-scm.com/download/win)
+- Terraform: [Download from terraform.io](https://developer.hashicorp.com/terraform/downloads)
+- gcloud CLI: [Download from Google Cloud](https://cloud.google.com/sdk/docs/install#windows)
+
+</details>
+
+<details>
+<summary><b>Linux Installation (Ubuntu/Debian)</b></summary>
+
+### 1. Update Package Manager
+
+Open **Terminal** and run:
+
+```bash
+sudo apt update
+```
+
+### 2. Install Git
+
+```bash
+sudo apt install git -y
+```
+
+Verify:
+
+```bash
+git --version
+```
+
+### 3. Install Terraform
+
+```bash
+# Add HashiCorp GPG key
+wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+# Add HashiCorp repository
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+
+# Install Terraform
+sudo apt update && sudo apt install terraform -y
+```
+
+Verify:
+
+```bash
+terraform --version
+```
+
+### 4. Install gcloud CLI
+
+```bash
+# Add Google Cloud SDK repository
+echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+
+# Add GPG key
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+
+# Install gcloud CLI
+sudo apt update && sudo apt install google-cloud-cli -y
+```
+
+Verify:
+
+```bash
+gcloud --version
+```
+
+</details>
+
+<details>
+<summary><b>Linux Installation (Fedora/RHEL/CentOS)</b></summary>
+
+### 1. Update Package Manager
+
+```bash
+sudo dnf update -y
+```
+
+### 2. Install Git
+
+```bash
+sudo dnf install git -y
+```
+
+Verify:
+
+```bash
+git --version
+```
+
+### 3. Install Terraform
+
+```bash
+# Add HashiCorp repository
+sudo dnf install -y dnf-plugins-core
+sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
+
+# Install Terraform
+sudo dnf install terraform -y
+```
+
+Verify:
+
+```bash
+terraform --version
+```
+
+### 4. Install gcloud CLI
+
+```bash
+# Add Google Cloud SDK repository
+sudo tee -a /etc/yum.repos.d/google-cloud-sdk.repo << EOM
+[google-cloud-cli]
+name=Google Cloud CLI
+baseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el8-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOM
+
+# Install gcloud CLI
+sudo dnf install google-cloud-cli -y
+```
+
+Verify:
+
+```bash
+gcloud --version
+```
+
+</details>
 
 <br>
 
@@ -113,6 +291,9 @@ You should see your account email marked with an asterisk (*).
 
 ### 6. Generate SSH Key Pair
 
+<details>
+<summary><b>macOS / Linux</b></summary>
+
 If you don't already have an SSH key, generate one:
 
 ```bash
@@ -128,6 +309,31 @@ cat ~/.ssh/vaultwarden-gcp.pub
 ```
 
 Copy this entire output — you'll need it for `terraform.tfvars`.
+
+</details>
+
+<details>
+<summary><b>Windows (PowerShell)</b></summary>
+
+If you don't already have an SSH key, generate one:
+
+```powershell
+ssh-keygen -t rsa -b 4096 -C "vaultwarden@gcp" -f $env:USERPROFILE\.ssh\vaultwarden-gcp
+```
+
+Press Enter to accept defaults (no passphrase for automated access).
+
+View your public key:
+
+```powershell
+Get-Content $env:USERPROFILE\.ssh\vaultwarden-gcp.pub
+```
+
+Copy this entire output — you'll need it for `terraform.tfvars`.
+
+**Note:** If `ssh-keygen` is not found, ensure Git is installed (it includes OpenSSH) or install [OpenSSH for Windows](https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse).
+
+</details>
 
 <br>
 
