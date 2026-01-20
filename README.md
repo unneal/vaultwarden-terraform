@@ -569,10 +569,10 @@ The `.aws.example` files contain the complete AWS deployment configuration and c
 
 ## Refer
 
-- Vaultwarden - https://github.com/dani-garcia/vaultwarden/
-- Terraform Documentation - https://developer.hashicorp.com/terraform/docs
-- AWS Documentation - https://docs.aws.amazon.com/
-- Google Cloud Platform Documentation - https://docs.cloud.google.com/docs
+- [Vaultwarden](https://github.com/dani-garcia/vaultwarden/)
+- [Terraform Documentation](https://developer.hashicorp.com/terraform/docs)
+- [AWS Documentation](https://docs.aws.amazon.com/)
+- [Google Cloud Platform Documentation](https://docs.cloud.google.com/docs)
 
 ---
 
