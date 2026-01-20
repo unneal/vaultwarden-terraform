@@ -4,7 +4,7 @@ This repository deploys a secure, encrypted, self-hosted password manager (Vault
 
 This setup is designed so any organization with small-medium scale password management requirements across multiple teams can deploy and manage Vaultwarden without prior experience with Terraform, cloud infrastructure, or command-line tooling. All steps assume a clean macOS system (although the same is absolutely compatible and configured for Windows OS) with no prior tooling installed.
 
-**This deployment creates real GCP infrastructure and may incur costs.**
+**This deployment creates real GCP infrastructure and may incur costs. [[Disclaimer](#disclaimer)]**
 
 ---
 
